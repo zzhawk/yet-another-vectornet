@@ -9,9 +9,17 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     python3-setuptools \
     python3-wheel \
+    python3-matplotlib \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
     
-RUN git clone https://github.com/zzhawk/yet-another-vectornet.git ~/vectornet
-RUN cd ~/vectornet
-RUN pip install -r requirements.txt
+    
+RUN python3 -m pip install --upgrade pip \
+    && pip3 list
+    
+WORKDIR /workspace    
+RUN git clone https://github.com/zzhawk/yet-another-vectornet.git /workspace/vectornet
+RUN cd /workspace/vectornet && \
+    git checkout orin && \
+    git pull && \
+    pip3 install -r requirements.txt
