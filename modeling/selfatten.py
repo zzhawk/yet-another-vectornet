@@ -22,17 +22,14 @@ def masked_softmax(X, valid_len):
     if valid_len is None:
         return nn.functional.softmax(X, dim=-1)
     else:
-        shape = X.shape
-        if valid_len.dim() == 1:
-            valid_len = torch.repeat_interleave(
-                valid_len, repeats=shape[1], dim=0)
-        else:
-            valid_len = valid_len.reshape(-1)
-        # Fill masked elements with a large negative, whose exp is 0
-        X = X.reshape(-1, shape[-1])
-        for count, row in enumerate(X):
-            row[int(valid_len[count]):] = -1e6
-        return nn.functional.softmax(X.reshape(shape), dim=-1)
+        # Create a mask based on valid_len
+        mask = torch.arange(X.size(-1), device=X.device).expand(X.size(0), X.size(1), X.size(2)) < valid_len.unsqueeze(-1).unsqueeze(-1)
+            
+        # Fill masked elements with a large negative value, whose exp is 0
+        X = X.masked_fill(~mask, float('-inf'))
+        
+        # Compute softmax
+        return nn.functional.softmax(X, dim=-1)
 
 
 class SelfAttentionLayer(nn.Module):

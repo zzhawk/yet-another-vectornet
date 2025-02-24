@@ -3,6 +3,7 @@
 # @Time    : 2020-05-27 15:00
 # @Author  : Xiaoke Huang
 # @Email   : xiaokehuang@foxmail.com
+import warnings
 from utils.config import color_dict
 from argoverse.data_loading.argoverse_forecasting_loader import ArgoverseForecastingLoader
 from argoverse.map_representation.map_api import ArgoverseMap
@@ -203,15 +204,17 @@ def encoding_features(agent_feature, obj_feature_ls, lane_feature_ls):
         # lane_nd = np.vstack((lane_nd, l_lane_nd, r_lane_nd))
 
     # FIXME: handling `nan` in lane_nd
-    col_mean = np.nanmean(lane_nd, axis=0)
-    if np.isnan(col_mean).any():
-        # raise ValueError(
-        # print(f"{col_mean}\nall z (height) coordinates are `nan`!!!!")
-        lane_nd[:, 2].fill(.0)
-        lane_nd[:, 5].fill(.0)
-    else:
-        inds = np.where(np.isnan(lane_nd))
-        lane_nd[inds] = np.take(col_mean, inds[1])
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        col_mean = np.nanmean(lane_nd, axis=0)
+        if np.isnan(col_mean).any():
+            # raise ValueError(
+            # print(f"{col_mean}\nall z (height) coordinates are `nan`!!!!")
+            lane_nd[:, 2].fill(.0)
+            lane_nd[:, 5].fill(.0)
+        else:
+            inds = np.where(np.isnan(lane_nd))
+            lane_nd[inds] = np.take(col_mean, inds[1])
 
     # traj_ls, lane_ls = reconstract_polyline(
     #     np.vstack((traj_nd, lane_nd)), traj_id2mask, lane_id2mask, traj_nd.shape[0])

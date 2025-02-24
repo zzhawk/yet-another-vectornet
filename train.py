@@ -52,7 +52,7 @@ miss_threshold = 2.0
 def save_checkpoint(checkpoint_dir, model, optimizer, end_epoch, val_minade, date):
     # state_dict: a Python dictionary object that:
     # - for a model, maps each layer to its parameter tensor;
-    # - for an optimizer, contains info about the optimizerâ€™s states and hyperparameters used.
+    # - for an optimizer, contains info about the optimizers states and hyperparameters used.
     os.makedirs(checkpoint_dir, exist_ok=True)
     state = {
         'state_dict': model.state_dict(),
@@ -60,7 +60,7 @@ def save_checkpoint(checkpoint_dir, model, optimizer, end_epoch, val_minade, dat
         'end_epoch' : end_epoch,
         'val_minade': val_minade
         }
-    checkpoint_path = os.path.join(checkpoint_dir, f'epoch_{end_epoch}.valminade_{val_minade:.3f}.{date}.{"xkhuang"}.pth')
+    checkpoint_path = os.path.join(checkpoint_dir, f'epoch_{end_epoch}.valminade_{val_minade:.3f}.{date}.xkhuang.pth')
     torch.save(state, checkpoint_path)
     print('model saved to %s' % checkpoint_path)
     
