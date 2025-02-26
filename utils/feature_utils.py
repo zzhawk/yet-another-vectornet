@@ -18,7 +18,7 @@ from utils.viz_utils import show_doubled_lane, show_traj
 from utils.agent_utils import get_agent_feature_ls
 from utils.viz_utils import *
 import pdb
-
+from datetime import datetime
 
 def compute_feature_for_one_seq(traj_df: pd.DataFrame, am: ArgoverseMap, obs_len: int = 20, lane_radius: int = 5, obj_radius: int = 10, viz: bool = False, mode='rect', query_bbox=[-100, 100, -100, 100]) -> List[List]:
     """
@@ -95,7 +95,9 @@ def compute_feature_for_one_seq(traj_df: pd.DataFrame, am: ArgoverseMap, obs_len
         plt.plot(0, 0, 'x', color='blue', markersize=4)
         plt.plot(start_x-query_x, start_y-query_y,
                  'x', color='blue', markersize=4)
-        plt.show()
+        plt.savefig(datetime.now().strftime("%H:%M:%S.%f") + 'vis.png')
+        plt.cla() 
+        # plt.show()
 
     return [agent_feature, obj_feature_ls, lane_feature_ls, norm_center]
 
